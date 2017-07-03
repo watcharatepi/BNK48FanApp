@@ -1,11 +1,14 @@
 package com.dotnextstudio.com.bnk48fanapp;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -70,12 +73,19 @@ public class BaseFragment extends Fragment implements BaseSliderView.OnSliderCli
     Button mButton;
     FragmentNavigation mFragmentNavigation;
 
+    private RecyclerView mRecycler;
+    public List<Data> mData;
+
+    private LinearLayoutManager mManager;
+
     public static final String URL =
             "http://blog.teamtreehouse.com/api/get_recent_summary/";
  //   public CustomAdapter mAdapter;
     int mInt = 0;
     public   ListView mListView;
     private DatabaseReference mDatabase;
+
+    private SliderLayout sliderLayout ;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,10 +99,8 @@ public class BaseFragment extends Fragment implements BaseSliderView.OnSliderCli
         View view = inflater.inflate(R.layout.home_news, container, false);
 
 
-        mDatabase = FirebaseDatabase.getInstance().getReference();
 
 
-        SliderLayout sliderLayout ;
 
         sliderLayout = (SliderLayout)view.findViewById(R.id.slider);
 
@@ -101,36 +109,7 @@ public class BaseFragment extends Fragment implements BaseSliderView.OnSliderCli
         circularFillableLoaders.setProgress(0);
         circularFillableLoaders.setVisibility(View.GONE);
 
-        HashMapForURL = new HashMap<String, String>();
 
-        HashMapForURL.put("Cat Radio", "https://pbs.twimg.com/media/DDVwG0PVYAI7ah_.jpg");
-
-        for(String name : HashMapForURL.keySet()){
-
-            TextSliderView textSliderView = new TextSliderView(getActivity());
-
-            textSliderView
-                    .description(name)
-                    .image(HashMapForURL.get(name))
-                    .setScaleType(BaseSliderView.ScaleType.CenterCrop)
-                    .setOnSliderClickListener(this);
-
-            textSliderView.bundle(new Bundle());
-
-            textSliderView.getBundle()
-                    .putString("extra",name);
-
-            sliderLayout.addSlider(textSliderView);
-        }
-       // sliderLayout.setPresetTransformer(SliderLayout.Transformer.DepthPage);
-
-        sliderLayout.setPresetIndicator(SliderLayout.PresetIndicators.Center_Bottom);
-
-        sliderLayout.setCustomAnimation(new DescriptionAnimation());
-
-        sliderLayout.setDuration(3000);
-
-        sliderLayout.addOnPageChangeListener(this);
 
 
         mListView = (ListView) view.findViewById(R.id.listV);
@@ -140,6 +119,84 @@ public class BaseFragment extends Fragment implements BaseSliderView.OnSliderCli
         return view;
     }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("main");
+
+        HashMapForURL = new HashMap<String, String>();
+        Activity av = getActivity();
+        mDatabase.limitToLast(5).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                for (DataSnapshot msgSnapshot: snapshot.getChildren()) {
+                    Hotsnews msg = msgSnapshot.getValue(Hotsnews.class);
+                    Log.i("dev","==>"+msg.getTitle());
+                    HashMapForURL.put("Cat Radio", "https://pbs.twimg.com/media/DDVwG0PVYAI7ah_.jpg");
+                }
+
+
+
+                for(String name : HashMapForURL.keySet()){
+
+                    TextSliderView textSliderView = new TextSliderView(getActivity());
+
+                    textSliderView
+                            .description(name)
+                            .image(HashMapForURL.get(name))
+                            .setScaleType(BaseSliderView.ScaleType.CenterCrop)
+                            .setOnSliderClickListener(new BaseSliderView.OnSliderClickListener() {
+                                @Override
+                                public void onSliderClick(BaseSliderView slider) {
+
+                                }
+                            });
+
+                    textSliderView.bundle(new Bundle());
+
+                    textSliderView.getBundle()
+                            .putString("extra",name);
+
+                    sliderLayout.addSlider(textSliderView);
+                }
+                // sliderLayout.setPresetTransformer(SliderLayout.Transformer.DepthPage);
+
+                sliderLayout.setPresetIndicator(SliderLayout.PresetIndicators.Center_Bottom);
+
+                sliderLayout.setCustomAnimation(new DescriptionAnimation());
+
+                sliderLayout.setDuration(10000);
+
+                sliderLayout.addOnPageChangeListener(new ViewPagerEx.OnPageChangeListener() {
+                    @Override
+                    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                    }
+
+                    @Override
+                    public void onPageSelected(int position) {
+
+                    }
+
+                    @Override
+                    public void onPageScrollStateChanged(int state) {
+
+                    }
+                });
+
+
+            }
+            @Override
+            public void onCancelled(DatabaseError error) {
+                //Log.e("Chat", "The read failed: " + error.getText());
+            }
+        });
+
+
+
+
+
+    }
 
     private class SimpleTask extends AsyncTask<String, Void, String> {
 

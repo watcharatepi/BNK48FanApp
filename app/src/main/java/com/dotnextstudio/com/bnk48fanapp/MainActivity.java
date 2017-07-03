@@ -4,8 +4,18 @@ import android.support.annotation.IdRes;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
 
+import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.model.DividerDrawerItem;
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.Nameable;
 import com.ncapdevi.fragnav.FragNavController;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabReselectListener;
@@ -24,12 +34,63 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Frag
     private BottomBar mBottomBar;
     private FragNavController mNavController;
 
+    private Drawer result = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setTitle("Home");
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+
+//        setSupportActionBar(toolbar);
+
+        result = new DrawerBuilder()
+                .withActivity(this)
+                .withToolbar(toolbar)
+                .inflateMenu(R.menu.menu)
+                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                    @Override
+                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                        if (drawerItem instanceof Nameable) {
+                           // Toast.makeText(MenuDrawerActivity.this, ((Nameable) drawerItem).getName().getText(MenuDrawerActivity.this), Toast.LENGTH_SHORT).show();
+                        }
+
+                        return false;
+                    }
+                }).build();
+
+        Log.d("dev","===>"+result);
+
+
+
+     //   getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+
+       // result.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
+
+
+      /*  PrimaryDrawerItem item1 = new PrimaryDrawerItem().withIdentifier(1).withName(R.string.drawer_item_home);
+        SecondaryDrawerItem item2 = new SecondaryDrawerItem().withIdentifier(2).withName(R.string.drawer_item_settings);
+
+//create the drawer and remember the `Drawer` result object
+        Drawer result = new DrawerBuilder()
+                .withActivity(this)
+                .withToolbar(toolbar)
+                .addDrawerItems(
+                        item1,
+                        new DividerDrawerItem(),
+                        item2,
+                        new SecondaryDrawerItem().withName(R.string.drawer_item_settings)
+                )
+                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+
+                    @Override
+                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                        // do something with the clicked item :D
+                    }
+                })
+                .build();*/
 
         mBottomBar = (BottomBar) findViewById(R.id.bottomBar);
         mBottomBar.selectTabAtPosition(INDEX_HOME);
@@ -78,6 +139,21 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Frag
 
     }
 
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Log.d("dev","===>"+item.getItemId());
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+
     @Override
     public Fragment getRootFragment(int index) {
 
@@ -100,6 +176,11 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Frag
     public void onBackPressed() {
         if (!mNavController.isRootFragment()) {
             mNavController.popFragment();
+        } else {
+            super.onBackPressed();
+        }
+        if (result != null && result.isDrawerOpen()) {
+            result.closeDrawer();
         } else {
             super.onBackPressed();
         }

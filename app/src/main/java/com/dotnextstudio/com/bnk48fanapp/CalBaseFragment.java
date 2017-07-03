@@ -139,20 +139,20 @@ public class CalBaseFragment extends Fragment {
     }
 
     private void loadEvents() {
-        addEvents(-1, -1);
-        addEvents(Calendar.DECEMBER, -1);
-        addEvents(Calendar.AUGUST, -1);
+     //   addEvents(-1, -1);
+       // addEvents(Calendar.DECEMBER, -1);
+       // addEvents(Calendar.AUGUST, -1);
     }
 
     private void loadEventsForYear(int year) {
-        addEvents(Calendar.DECEMBER, year);
-        addEvents(Calendar.AUGUST, year);
+        //addEvents(Calendar.DECEMBER, year);
+       // addEvents(Calendar.AUGUST, year);
     }
 
     private void logEventsByMonth(CompactCalendarView compactCalendarView) {
         currentCalender.setTime(new Date());
         currentCalender.set(Calendar.DAY_OF_MONTH, 1);
-        currentCalender.set(Calendar.MONTH, Calendar.AUGUST);
+        currentCalender.set(Calendar.MONTH, Calendar.JULY);
         List<String> dates = new ArrayList<>();
         for (Event e : compactCalendarView.getEventsForMonth(new Date())) {
             dates.add(dateFormatForDisplaying.format(e.getTimeInMillis()));

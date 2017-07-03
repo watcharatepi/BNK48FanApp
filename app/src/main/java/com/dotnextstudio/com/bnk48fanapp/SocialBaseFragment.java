@@ -2,6 +2,9 @@ package com.dotnextstudio.com.bnk48fanapp;
 
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -19,6 +22,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.android.gms.vision.text.Text;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -96,6 +100,22 @@ public class SocialBaseFragment extends Fragment {
         return view;
     }
 
+
+    public String getFacebookPageURL(Context context,String url) {
+        PackageManager packageManager = context.getPackageManager();
+        try {
+            int versionCode = packageManager.getPackageInfo("com.facebook.katana", 0).versionCode;
+            if (versionCode >= 3002850) { //newer versions of fb app
+                return "fb://facewebmodal/f?href=" + url;
+            } else { //older versions of fb app
+              //  return "fb://page/" + FACEBOOK_PAGE_ID;
+                return url;
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            return url; //normal web url
+        }
+    }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -110,7 +130,7 @@ public class SocialBaseFragment extends Fragment {
         mAdapter = new FirebaseRecyclerAdapter<Data, ChatHolder>(Data.class, R.layout.cards,
                 ChatHolder.class,query ) {
             @Override
-            protected void populateViewHolder(ChatHolder viewHolder, Data model, int position) {
+            protected void populateViewHolder(ChatHolder viewHolder, final Data model, int position) {
 
 
                 final DatabaseReference eventRef = getRef(position);
@@ -119,6 +139,23 @@ public class SocialBaseFragment extends Fragment {
                 final String postKey = eventRef.getKey();
 
                 Ion.with(viewHolder.fbimage).load(model.getFull_picture());
+                viewHolder.membername.setText(model.getMember());
+                viewHolder.message.setText(model.getMessage());
+                viewHolder.fbimage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+
+                        Intent facebookIntent = new Intent(Intent.ACTION_VIEW);
+                        String facebookUrl =getFacebookPageURL(v.getContext(),  model.getLink());
+                        facebookIntent.setData(Uri.parse(facebookUrl));
+                        startActivity(facebookIntent);
+
+
+
+                    }
+                });
+
 
             }
 
@@ -131,13 +168,17 @@ public class SocialBaseFragment extends Fragment {
 
     public static class ChatHolder extends RecyclerView.ViewHolder {
         private final ImageView fbimage;
+        private final TextView membername;
+        private final TextView message;
 
         public ChatHolder(View itemView) {
             super(itemView);
             fbimage = (ImageView) itemView.findViewById(R.id.fbimage);
+            membername = (TextView) itemView.findViewById(R.id.membername);
+            message = (TextView) itemView.findViewById(R.id.message);
 
 
-           // fbimage.setImageResource(R.drawable.test1);
+            // fbimage.setImageResource(R.drawable.test1);
         }
 
         public void setImage(String url) {
