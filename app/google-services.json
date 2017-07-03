@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "246019399060",
+    "firebase_url": "https://agile-future-127308.firebaseio.com",
+    "project_id": "agile-future-127308",
+    "storage_bucket": "agile-future-127308.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:246019399060:android:2e763a235980ea27",
+        "android_client_info": {
+          "package_name": "com.dotnextstudio.com.bnk48fanapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "246019399060-jnc8s7li8kh9rat3t6amm43cso51tkep.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dotnextstudio.com.bnk48fanapp",
+            "certificate_hash": "c50dca39e66772a4921ddee7305366c0b3d89f7d"
+          }
+        },
+        {
+          "client_id": "246019399060-6gse3bjq40mrcq44kd27enn2g5e5m2nv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8elC9jFjScpnjSRfT-gGm-BoAyL9TGJo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "246019399060-6gse3bjq40mrcq44kd27enn2g5e5m2nv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
