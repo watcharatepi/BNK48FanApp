@@ -6,12 +6,11 @@
 
 
     <ImageView
-        android:background="@color/md_black_1000"
         android:id="@+id/newsimage"
         android:adjustViewBounds="true"
         android:scaleType="centerCrop"
-        android:layout_width="50dp"
-        android:layout_height="50dp" />
+        android:layout_width="150dp"
+        android:layout_height="90dp" />
 
     <TextView
         android:id="@+id/newstitle"

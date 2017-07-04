@@ -2,6 +2,7 @@ package com.dotnextstudio.com.bnk48fanapp;
 
 import android.support.annotation.IdRes;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -33,6 +34,15 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Frag
     private final int INDEX_MARKET = FragNavController.TAB5;
     private BottomBar mBottomBar;
     private FragNavController mNavController;
+
+    FragmentManager mFragmentManager;
+    Fragment mFragment;
+    Fragment tabFragment1 = NewsFragment.newInstance(0);
+    Fragment tabFragment2 = CalFragment.newInstance(0);
+    Fragment tabFragment3 = SocialFragment.newInstance(0);
+    Fragment tabFragment4 = NewsFragment.newInstance(0);
+    Fragment tabFragment5 = NewsFragment.newInstance(0);
+
 
     private Drawer result = null;
     @Override
@@ -103,11 +113,10 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Frag
 
 
 
-
-        mBottomBar.setOnTabSelectListener(new OnTabSelectListener() {
+        mFragmentManager = getSupportFragmentManager();
+       /* mBottomBar.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
             public void onTabSelected(@IdRes int tabId) {
-               ;
                 switch (tabId) {
                     case R.id.tab_home:
                         Log.d("dev","home===>");
@@ -128,7 +137,18 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Frag
                         break;
                 }
             }
+        });*/
+
+
+        mBottomBar.setOnTabSelectListener(new OnTabSelectListener() {
+            @Override
+            public void onTabSelected(@IdRes int tabId) {
+
+            }
         });
+
+
+
 
         mBottomBar.setOnTabReselectListener(new OnTabReselectListener() {
             @Override
@@ -136,6 +156,9 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Frag
                 mNavController.clearStack();
             }
         });
+
+
+
 
     }
 
@@ -170,6 +193,8 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Frag
                 return NewsFragment.newInstance(0);
         }
         throw new IllegalStateException("Need to send an index that we know");
+
+
     }
 
     @Override

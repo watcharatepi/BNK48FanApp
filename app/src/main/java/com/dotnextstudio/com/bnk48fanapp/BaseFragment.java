@@ -4,11 +4,16 @@ package com.dotnextstudio.com.bnk48fanapp;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -93,6 +98,8 @@ public class BaseFragment extends Fragment implements BaseSliderView.OnSliderCli
 
     public FirebaseRecyclerAdapter<Data, NewsHolder> mAdapter;
 
+    public ActionBar toolbar;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,13 +115,12 @@ public class BaseFragment extends Fragment implements BaseSliderView.OnSliderCli
 
 
 
-
         sliderLayout = (SliderLayout)view.findViewById(R.id.slider);
 
-        CircularFillableLoaders circularFillableLoaders = (CircularFillableLoaders)view.findViewById(R.id.circularFillableLoaders);
+      /*  CircularFillableLoaders circularFillableLoaders = (CircularFillableLoaders)view.findViewById(R.id.circularFillableLoaders);
 
         circularFillableLoaders.setProgress(0);
-        circularFillableLoaders.setVisibility(View.GONE);
+        circularFillableLoaders.setVisibility(View.GONE);*/
 
 
 
@@ -130,10 +136,19 @@ public class BaseFragment extends Fragment implements BaseSliderView.OnSliderCli
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+
+
+        toolbar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        toolbar.setTitle("Hot News");
+
         mManager = new LinearLayoutManager(getActivity());
         mManager.setReverseLayout(true);
         mManager.setStackFromEnd(true);
         mListView.setLayoutManager(mManager);
+
+
+        HashMapForURL = new HashMap<String, String>();
+
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
@@ -150,7 +165,9 @@ public class BaseFragment extends Fragment implements BaseSliderView.OnSliderCli
             public void onDataChange(DataSnapshot snapshot) {
 
 
-                HashMapForURL = new HashMap<String, String>();
+                HashMapForURL.clear();
+                Log.i("dev","onDataChange==>"+HashMapForURL.size());
+
                 for (DataSnapshot msgSnapshot: snapshot.getChildren()) {
                     Hotsnews msg = msgSnapshot.getValue(Hotsnews.class);
 
@@ -216,8 +233,9 @@ public class BaseFragment extends Fragment implements BaseSliderView.OnSliderCli
         });
 
 
-        Query query =  mDatabase.child("data").orderByChild("updated_time").limitToLast(10);
+        Query query =  mDatabase.child("data").orderByChild("updated_time").limitToLast(5);
 
+        ContextCompat.getDrawable(getActivity(),R.drawable.line_divider);
 
         mAdapter = new FirebaseRecyclerAdapter<Data, NewsHolder>(Data.class, R.layout.item_news,
                 NewsHolder.class,query ) {
@@ -243,8 +261,11 @@ public class BaseFragment extends Fragment implements BaseSliderView.OnSliderCli
         mListView.setAdapter(mAdapter);
 
 
+        mListView.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
 
     }
+
+
 
 
 
@@ -297,6 +318,33 @@ public class BaseFragment extends Fragment implements BaseSliderView.OnSliderCli
         public void setImage(String url) {
 
 
+        }
+    }
+
+    public class SimpleDividerItemDecoration extends RecyclerView.ItemDecoration {
+        private Drawable mDivider;
+
+        public SimpleDividerItemDecoration(Context context) {
+            mDivider = context.getResources().getDrawable(R.drawable.line_divider);
+        }
+
+        @Override
+        public void onDrawOver(Canvas c, RecyclerView parent, RecyclerView.State state) {
+            int left = parent.getPaddingLeft();
+            int right = parent.getWidth() - parent.getPaddingRight();
+
+            int childCount = parent.getChildCount();
+            for (int i = 0; i < childCount; i++) {
+                View child = parent.getChildAt(i);
+
+                RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child.getLayoutParams();
+
+                int top = child.getBottom() + params.bottomMargin;
+                int bottom = top + mDivider.getIntrinsicHeight();
+
+                mDivider.setBounds(left, top, right, bottom);
+                mDivider.draw(c);
+            }
         }
     }
 }
