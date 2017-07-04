@@ -3,6 +3,8 @@ package com.dotnextstudio.com.bnk48fanapp;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -16,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -24,6 +27,7 @@ import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.daimajia.slider.library.SliderTypes.TextSliderView;
 import com.daimajia.slider.library.Tricks.ViewPagerEx;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -73,7 +77,6 @@ public class BaseFragment extends Fragment implements BaseSliderView.OnSliderCli
     Button mButton;
     FragmentNavigation mFragmentNavigation;
 
-    private RecyclerView mRecycler;
     public List<Data> mData;
 
     private LinearLayoutManager mManager;
@@ -82,10 +85,14 @@ public class BaseFragment extends Fragment implements BaseSliderView.OnSliderCli
             "http://blog.teamtreehouse.com/api/get_recent_summary/";
  //   public CustomAdapter mAdapter;
     int mInt = 0;
-    public   ListView mListView;
+    public   RecyclerView mListView;
+
     private DatabaseReference mDatabase;
 
     private SliderLayout sliderLayout ;
+
+    public FirebaseRecyclerAdapter<Data, NewsHolder> mAdapter;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,7 +119,7 @@ public class BaseFragment extends Fragment implements BaseSliderView.OnSliderCli
 
 
 
-        mListView = (ListView) view.findViewById(R.id.listV);
+        mListView = (RecyclerView) view.findViewById(R.id.listV);
 
         //new SimpleTask().execute(URL);
 
@@ -122,25 +129,41 @@ public class BaseFragment extends Fragment implements BaseSliderView.OnSliderCli
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("main");
 
-        HashMapForURL = new HashMap<String, String>();
+        mManager = new LinearLayoutManager(getActivity());
+        mManager.setReverseLayout(true);
+        mManager.setStackFromEnd(true);
+        mListView.setLayoutManager(mManager);
+
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
+        Hotsnews hotsnews = new Hotsnews("test2", "test2","https://pbs.twimg.com/media/DD4j64vUMAQON3j.jpg");
+
+        String key =  mDatabase.child("main").push().getKey();
+        //Log.i("dev","getTitle==>"+key);
+      //  mDatabase.child(key).setValue(hotsnews);
+
+
         Activity av = getActivity();
-        mDatabase.limitToLast(5).addValueEventListener(new ValueEventListener() {
+        mDatabase.child("main").limitToLast(5).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
+
+
+                HashMapForURL = new HashMap<String, String>();
                 for (DataSnapshot msgSnapshot: snapshot.getChildren()) {
                     Hotsnews msg = msgSnapshot.getValue(Hotsnews.class);
-                    Log.i("dev","==>"+msg.getTitle());
-                    HashMapForURL.put("Cat Radio", "https://pbs.twimg.com/media/DDVwG0PVYAI7ah_.jpg");
+
+                    HashMapForURL.put(msg.getTitle(), msg.getLink());
+                   // Log.i("dev","getTitle==>"+msg.getLink());
                 }
 
-
+              //  Log.i("dev","getTitle==>"+ HashMapForURL.size());
 
                 for(String name : HashMapForURL.keySet()){
 
                     TextSliderView textSliderView = new TextSliderView(getActivity());
-
+                  //  Log.i("dev","getTitle 1==>"+HashMapForURL.get(name));
                     textSliderView
                             .description(name)
                             .image(HashMapForURL.get(name))
@@ -165,7 +188,7 @@ public class BaseFragment extends Fragment implements BaseSliderView.OnSliderCli
 
                 sliderLayout.setCustomAnimation(new DescriptionAnimation());
 
-                sliderLayout.setDuration(10000);
+                sliderLayout.setDuration(5000);
 
                 sliderLayout.addOnPageChangeListener(new ViewPagerEx.OnPageChangeListener() {
                     @Override
@@ -193,95 +216,36 @@ public class BaseFragment extends Fragment implements BaseSliderView.OnSliderCli
         });
 
 
+        Query query =  mDatabase.child("data").orderByChild("updated_time").limitToLast(10);
+
+
+        mAdapter = new FirebaseRecyclerAdapter<Data, NewsHolder>(Data.class, R.layout.item_news,
+                NewsHolder.class,query ) {
+            @Override
+            protected void populateViewHolder(NewsHolder viewHolder, final Data model, int position) {
+
+
+                final DatabaseReference eventRef = getRef(position);
+
+
+                final String postKey = eventRef.getKey();
+
+               Ion.with(viewHolder.newsimage).load(model.getFull_picture());
+
+                viewHolder.newstitle.setText(model.getMessage());
+
+
+
+            }
+
+
+        };
+        mListView.setAdapter(mAdapter);
 
 
 
     }
 
-    private class SimpleTask extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            // Create Show ProgressBar
-        }
-
-        protected String doInBackground(String... urls)   {
-            String result = "";
-
-            Query query = mDatabase.child("data").orderByChild("updated_time").limitToLast(30);
-
-            query.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.exists()) {
-                        Data blog =  dataSnapshot.getValue(Data.class);
-                       // Log.d("Count " ,"===>"+dataSnapshot.getChildrenCount());
-                        // dataSnapshot is the "issue" node with all children with id 0
-                        for (DataSnapshot issue : dataSnapshot.getChildren()) {
-                            // do something with the individual "issues"
-                            //Log.v("dev","===>"+ issue.getKey()); //displays the key for the node
-                           // Log.v("dev","===>"+ issue.child("updated_time").getValue());   //gives the value for given keyname
-
-
-                        }
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    Log.d("dev","no===>"+databaseError);
-                }
-            });
-
-
-            /*try {
-
-                HttpGet httpGet = new HttpGet(urls[0]);
-                HttpClient client = new DefaultHttpClient();
-
-                HttpResponse response = client.execute(httpGet);
-
-                int statusCode = response.getStatusLine().getStatusCode();
-
-                if (statusCode == 200) {
-                    InputStream inputStream = response.getEntity().getContent();
-                    BufferedReader reader = new BufferedReader
-                            (new InputStreamReader(inputStream));
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        result += line;
-                    }
-                }
-
-            } catch (ClientProtocolException e) {
-
-            } catch (IOException e) {
-
-            }*/
-
-
-
-
-
-
-            return result;
-        }
-
-        protected void onPostExecute(String jsonString)  {
-            // Dismiss ProgressBar
-           // showData(jsonString);
-        }
-    }
-
-    private void showData(String jsonString) {
-        /*Gson gson = new Gson();
-        Blog blog = gson.fromJson(jsonString, Blog.class);
-        List<Post> posts = blog.getPosts();
-
-
-        mAdapter = new CustomAdapter(getActivity(), posts);
-        mListView.setAdapter(mAdapter);*/
-    }
 
 
     @Override
@@ -314,5 +278,25 @@ public class BaseFragment extends Fragment implements BaseSliderView.OnSliderCli
 
     public interface FragmentNavigation {
         public void pushFragment(Fragment fragment);
+    }
+
+    public static class NewsHolder extends RecyclerView.ViewHolder {
+        private final ImageView newsimage;
+        private final TextView newstitle;
+
+        public NewsHolder(View itemView) {
+            super(itemView);
+            newsimage = (ImageView) itemView.findViewById(R.id.newsimage);
+
+            newstitle = (TextView) itemView.findViewById(R.id.newstitle);
+
+
+            // fbimage.setImageResource(R.drawable.test1);
+        }
+
+        public void setImage(String url) {
+
+
+        }
     }
 }
