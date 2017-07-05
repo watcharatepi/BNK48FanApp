@@ -46,6 +46,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
+import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.Nameable;
 import com.mikhaellopez.circularfillableloaders.CircularFillableLoaders;
 
 import java.io.BufferedReader;
@@ -100,6 +104,7 @@ public class BaseFragment extends Fragment implements BaseSliderView.OnSliderCli
 
     public ActionBar toolbar;
 
+    private Drawer result = null;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,6 +118,10 @@ public class BaseFragment extends Fragment implements BaseSliderView.OnSliderCli
         View view = inflater.inflate(R.layout.home_news, container, false);
 
 
+        toolbar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+
+
+        new DrawerBuilder().withActivity(getActivity()).build();
 
 
         sliderLayout = (SliderLayout)view.findViewById(R.id.slider);
@@ -138,8 +147,10 @@ public class BaseFragment extends Fragment implements BaseSliderView.OnSliderCli
 
 
 
-        toolbar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-        toolbar.setTitle("Hot News");
+     //   toolbar.setTitle("Hot News");
+
+
+
 
         mManager = new LinearLayoutManager(getActivity());
         mManager.setReverseLayout(true);
@@ -251,7 +262,6 @@ public class BaseFragment extends Fragment implements BaseSliderView.OnSliderCli
                Ion.with(viewHolder.newsimage).load(model.getFull_picture());
 
                 viewHolder.newstitle.setText(model.getMessage());
-
 
 
             }

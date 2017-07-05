@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@android:color/holo_blue_dark"
+    android:layout_height="wrap_content" >
+
+
+    <TextView
+        android:padding="10dp"
+        android:id="@+id/newstitle"
+        android:paddingLeft="3dp"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:textColor="@android:color/white"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="DIGITAL LIVE "
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/newsimage" />
+    <TextView
+        android:layout_below="@+id/newstitle"
+        android:paddingLeft="10dp"
+        android:id="@+id/memberdetail"
+
+        android:textStyle="bold"
+        android:textSize="12sp"
+        android:paddingBottom="10dp"
+        android:textColor="@android:color/white"
+        android:background="@android:color/holo_blue_dark"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="JAN | MUSIC " />
+
+</RelativeLayout>
