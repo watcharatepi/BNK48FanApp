@@ -89,11 +89,6 @@ public class CalBaseFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
 
-     //   String key =  mDatabase.child("events").push().getKey();
-       // CalEvent ev = new CalEvent("Digital Live","1499252400000","","kidcat,jan","Digital Live", "", key);
-
-        //Log.i("dev","getTitle==>"+key);
-       //  mDatabase.child("events").child(key).setValue(ev);
 
 
 
@@ -105,6 +100,18 @@ public class CalBaseFragment extends Fragment {
         View view = inflater.inflate(R.layout.cal_menu, container, false);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
+
+        /*   String key =  mDatabase.child("events").push().getKey();
+         CalEvent ev = new CalEvent("Digital Live","1499338800000","","kidcat,jan","Digital Live", "", key);
+
+        //Log.i("dev","getTitle==>"+key);
+          mDatabase.child("events").child(key).setValue(ev);
+
+         ev = new CalEvent("HBD JENNIS ","1499166000000","","kidcat,jan","HBD JENNIS", "", key);
+
+        //Log.i("dev","getTitle==>"+key);
+        mDatabase.child("events").child(key).setValue(ev);*/
+
 
         compactCalendarView = (CompactCalendarView) view.findViewById(R.id.compactcalendar_view);
 
