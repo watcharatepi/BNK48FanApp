@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -18,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -28,11 +30,13 @@ import com.daimajia.slider.library.SliderTypes.TextSliderView;
 import com.daimajia.slider.library.Tricks.ViewPagerEx;
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import com.github.sundeepk.compactcalendarview.domain.Event;
+import com.google.android.gms.wearable.*;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.pchmn.materialchips.ChipView;
 import com.yalantis.phoenix.PullToRefreshView;
 
 import java.text.SimpleDateFormat;
@@ -68,11 +72,11 @@ public class CalBaseFragment extends Fragment {
     private Calendar currentCalender = Calendar.getInstance(Locale.getDefault());
     public static final String ARGS_INSTANCE = "com.dotnextstudio.com.bnk48fanapp.argsInstance";
     private ActionBar toolbar;
-    final List<String> mutableBookings = new ArrayList<>();
+    final List<DataEvent> mutableBookings = new ArrayList<>();
     public  CompactCalendarView compactCalendarView ;
     private SimpleDateFormat dateFormatForDisplaying = new SimpleDateFormat("dd-M-yyyy hh:mm:ss a", Locale.getDefault());
     private SimpleDateFormat dateFormatForMonth = new SimpleDateFormat("MMM - yyyy", Locale.getDefault());
-
+    public  ChatUserAdapter adapter;
     private DatabaseReference mDatabase;
     int mInt = 0;
     @Override
@@ -138,13 +142,13 @@ public class CalBaseFragment extends Fragment {
 
        // final ArrayAdapter adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, mutableBookings);
 
-        final ChatUserAdapter adapter = new ChatUserAdapter(getActivity(),0, mutableBookings);
+        adapter = new ChatUserAdapter(getActivity(),0, mutableBookings);
 
         mDatabase.child("events").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
 
-
+                mutableBookings.clear();
                 for (DataSnapshot msgSnapshot: snapshot.getChildren()) {
 
                     CalEvent ev = msgSnapshot.getValue(CalEvent.class);
@@ -198,9 +202,21 @@ public class CalBaseFragment extends Fragment {
                 if (bookingsFromMap != null) {
                     Log.d("dev", bookingsFromMap.toString());
                     mutableBookings.clear();
+
+
+                    adapter.clear();
+                    adapter.clearData();
+                    bookingsListView.setAdapter(null);
+                   // adapter.notifyDataSetChanged();
+
                     for (Event booking : bookingsFromMap) {
-                        mutableBookings.add((String) booking.getData());
+                        DataEvent dv = (DataEvent)booking.getData();
+                        Log.d("dev","booking==>"+dv.getTitle());
+                        mutableBookings.add(dv);
                     }
+
+                    bookingsListView.setAdapter(adapter);
+                    Log.d("dev","booking==>"+mutableBookings.size() );
                     adapter.notifyDataSetChanged();
                 }
 
@@ -249,8 +265,8 @@ public class CalBaseFragment extends Fragment {
     
        // Event ev = new Event(Color.argb(255, 169, 68, 65), Long.parseLong(date), title);
        // List<Event> events = null;
-    Log.d("dev","==>"+Long.parseLong(date));
-        List<Event> events = getEvents(Long.parseLong(date), title);
+    //Log.d("dev","==>"+Long.parseLong(date));
+        List<Event> events = getEvents(Long.parseLong(date), title, member);
 
         Log.d("dev", "Events: " + events);
         compactCalendarView.addEvents(events);
@@ -281,9 +297,11 @@ public class CalBaseFragment extends Fragment {
 
     }
 
-    private List<Event> getEvents(long timeInMillis, String day) {
+    private List<Event> getEvents(long timeInMillis, String title , String member) {
 
-        return Arrays.asList(new Event(Color.argb(255, 169, 68, 65), timeInMillis, "Event at " + new Date(timeInMillis)));
+        DataEvent de = new DataEvent(title,timeInMillis,"","" , member);
+
+        return Arrays.asList(new Event(Color.argb(255, 169, 68, 65), timeInMillis, de));
 
         /*if (day < 2) {
             return Arrays.asList(new Event(Color.argb(255, 169, 68, 65), timeInMillis, "Event at " + new Date(timeInMillis)));
@@ -315,28 +333,32 @@ public class CalBaseFragment extends Fragment {
         calendar.set(Calendar.MILLISECOND, 0);
     }
 
-    public class ChatUserAdapter extends ArrayAdapter<String> {
+    public class ChatUserAdapter extends ArrayAdapter<DataEvent> {
 
         private Activity context;
-        private List<String> userList;
+        private List<DataEvent> userList;
         private int ilayout;
 
-        public ChatUserAdapter(FragmentActivity context, int layout, List<String> userList) {
+        public ChatUserAdapter(FragmentActivity context, int layout, List<DataEvent> userList) {
             super(context, layout, userList);
             this.context = context;
             this.userList = userList;
             this.ilayout = layout;
         }
 
+        public void clearData(){
+            userList.clear();
+        }
 
-
-
+        @Override
         public long getItemId(int position) {
             return position;
         }
 
         class ViewHolder {
-            public TextView tvEmail;
+            public TextView timetitle;
+            public TextView newstitle;
+            public com.google.android.flexbox.FlexboxLayout memberdetail;
         }
 
         @Override
@@ -347,8 +369,39 @@ public class CalBaseFragment extends Fragment {
                 LayoutInflater layoutInflater = context.getLayoutInflater();
                 rowView = layoutInflater.inflate(R.layout.item_cal, null, true);
                 viewHolder = new ViewHolder();
-                Log.d("dev","==>"+position);
-               // viewHolder.tvEmail = (TextView) rowView.findViewById(R.id.tv_email);
+                viewHolder.memberdetail = (com.google.android.flexbox.FlexboxLayout)rowView.findViewById(R.id.memberdetail);
+
+
+                viewHolder.timetitle = (TextView) rowView.findViewById(R.id.timetitle);
+
+                viewHolder.newstitle = (TextView) rowView.findViewById(R.id.newstitle);
+
+                DataEvent item = userList.get(position);
+                Log.d("dev","booking==>x"+getItemId(position));
+                Log.d("dev","booking==>x"+position);
+               Log.d("dev","booking==>x"+item.getTitle());
+
+                try {
+                    String s[] = item.getMember().split(",");
+                    for (int i = 0;i<=s.length;i++){
+                        ChipView chipView = new ChipView(context);
+                        chipView.setLabel(s[i]);
+                        chipView.setPadding(2,2,2,2);
+                        chipView.setHasAvatarIcon(true);
+
+
+                        viewHolder.memberdetail.addView(chipView);
+                    }
+
+                }catch (Exception e){
+
+                }
+
+
+                viewHolder.newstitle.setText(item.getTitle().toUpperCase());
+
+
+               //
                // rowView.setTag(viewHolder);
             } else {
                 viewHolder = (ViewHolder) rowView.getTag();

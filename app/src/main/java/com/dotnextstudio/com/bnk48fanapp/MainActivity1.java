@@ -37,6 +37,7 @@ public class MainActivity1 extends AppCompatActivity  {
 
     public Fragment fragment1 = new NewsFragment().newInstance(0);
     public Fragment fragment2 = new CalFragment().newInstance(0);
+    public Fragment fragment3 = new LiveFragment().newInstance(0);
     public Fragment mFragment;
 
 
@@ -56,6 +57,7 @@ public class MainActivity1 extends AppCompatActivity  {
 
        // addHideFragment(fragment1);
         addHideFragment(fragment2);
+        addHideFragment(fragment3);
 
         mFragmentManager.beginTransaction().add(R.id.container, fragment1).commit();
         mFragment = fragment1;
@@ -77,6 +79,11 @@ public class MainActivity1 extends AppCompatActivity  {
                         setTitle("Calendar");
                         hideShowFragment(mFragment, fragment2);
                         mFragment = fragment2;
+                        break;
+                    case R.id.tab_ds:
+                        setTitle("Live Studio");
+                        hideShowFragment(mFragment, fragment3);
+                        mFragment = fragment3;
                         break;
 
                 }

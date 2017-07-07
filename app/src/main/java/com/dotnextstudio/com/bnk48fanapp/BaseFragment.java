@@ -182,7 +182,7 @@ public class BaseFragment extends Fragment implements BaseSliderView.OnSliderCli
                 for (DataSnapshot msgSnapshot: snapshot.getChildren()) {
                     Hotsnews msg = msgSnapshot.getValue(Hotsnews.class);
 
-                    HashMapForURL.put(msg.getTitle(), msg.getLink());
+                  //fix  HashMapForURL.put(msg.getTitle(), msg.getLink());
                    // Log.i("dev","getTitle==>"+msg.getLink());
                 }
 

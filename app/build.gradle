@@ -62,6 +62,9 @@ dependencies {
     compile('com.mikepenz:materialdrawer:5.9.4@aar') {
         transitive = true
     }
+    compile 'com.google.android:flexbox:0.3.0'
+    compile 'com.afollestad:easyvideoplayer:0.3.0'
+    compile 'com.github.pchmn:MaterialChipsInput:1.0.8'
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.1'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
     testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
