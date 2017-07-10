@@ -221,7 +221,7 @@ public class LiveBaseFragment extends Fragment {
                 //refresh to load data here.
                 return;
             }*/
-            Log.d("dev","loading==>"+dy);
+           // Log.d("dev","loading==>"+dy);
             if(dy > 0) //check for scroll down
             {
                 visibleItemCount = mManager.getChildCount();
@@ -230,11 +230,11 @@ public class LiveBaseFragment extends Fragment {
 
                 if (loading)
                 {
-                    Log.d("dev","loading==>");
+                    Log.d("dev","loading==>ccccc"+ (visibleItemCount + pastVisiblesItems)+" / "+totalItemCount);
                     if ( (visibleItemCount + pastVisiblesItems) >= totalItemCount)
                     {
                         loading = false;
-                        Log.v("...", "Last Item Wow !");
+                        Log.d("dev", "==Last Item Wow !");
                         //Do pagination.. i.e. fetch new data
                     }
                 }

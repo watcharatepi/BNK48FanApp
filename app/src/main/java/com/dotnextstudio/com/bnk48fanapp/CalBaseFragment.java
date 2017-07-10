@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -165,7 +166,7 @@ public class CalBaseFragment extends Fragment {
 
 
                 bookingsListView.setAdapter(adapter);
-                ViewCompat.setNestedScrollingEnabled(bookingsListView, true);
+              //  ViewCompat.setNestedScrollingEnabled(bookingsListView, true);
 
                 compactCalendarView.setUseThreeLetterAbbreviation(true);
 
@@ -386,8 +387,10 @@ public class CalBaseFragment extends Fragment {
                     for (int i = 0;i<=s.length;i++){
                         ChipView chipView = new ChipView(context);
                         chipView.setLabel(s[i]);
+
                         chipView.setPadding(2,2,2,2);
                         chipView.setHasAvatarIcon(true);
+                        chipView.setAvatarIcon(ContextCompat.getDrawable(getActivity(), R.drawable.cp));
 
 
                         viewHolder.memberdetail.addView(chipView);

@@ -2,27 +2,27 @@
     <tab
         id="@+id/tab_home"
         icon="@drawable/ic_home_white_24dp"
-        arColorWhenSelected="#AA00FF"
+        arColorWhenSelected="#c995c1"
         title="News" />
     <tab
         id="@+id/tab_cal"
         icon="@drawable/ic_today_black_24dp"
-        arColorWhenSelected="#AA00FF"
+        arColorWhenSelected="#c995c1"
         title="Calendar" />
     <tab
         id="@+id/tab_ds"
         icon="@drawable/ic_video_library_black_24dp"
-        arColorWhenSelected="#AA00FF"
+        arColorWhenSelected="#c995c1"
         title="Live" />
     <tab
         id="@+id/tab_sns"
         icon="@drawable/ic_pages_black_24dp"
-        arColorWhenSelected="#AA00FF"
+        arColorWhenSelected="#c995c1"
         title="Social" />
     <tab
         id="@+id/tab_market"
         icon="@drawable/ic_local_cafe_black_24dp"
-        arColorWhenSelected="#AA00FF"
+        arColorWhenSelected="#c995c1"
         title="BBS" />
 
 </tabs>
