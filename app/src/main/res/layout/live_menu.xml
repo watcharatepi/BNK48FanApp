@@ -7,19 +7,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-    tools:context="com.dotnextstudio.com.bnk48fanapp.MainActivity"
     >
 
 
 
-    <com.yalantis.phoenix.PullToRefreshView
 
-        android:id="@+id/pull_to_refresh"
-        android:layout_below="@+id/slider"
+    <com.yalantis.phoenix.PullToRefreshView
+        app:type="soup"
+        android:id="@+id/pull_to_refresh1"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <android.support.v7.widget.RecyclerView
+
             android:id="@+id/listV"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

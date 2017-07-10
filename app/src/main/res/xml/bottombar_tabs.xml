@@ -6,23 +6,23 @@
         title="News" />
     <tab
         id="@+id/tab_cal"
-        icon="@drawable/ic_home_white_24dp"
+        icon="@drawable/ic_today_black_24dp"
         arColorWhenSelected="#AA00FF"
         title="Calendar" />
     <tab
         id="@+id/tab_ds"
-        icon="@drawable/ic_home_white_24dp"
+        icon="@drawable/ic_video_library_black_24dp"
         arColorWhenSelected="#AA00FF"
         title="Live" />
     <tab
         id="@+id/tab_sns"
-        icon="@drawable/ic_home_white_24dp"
+        icon="@drawable/ic_pages_black_24dp"
         arColorWhenSelected="#AA00FF"
         title="Social" />
     <tab
         id="@+id/tab_market"
-        icon="@drawable/ic_home_white_24dp"
+        icon="@drawable/ic_local_cafe_black_24dp"
         arColorWhenSelected="#AA00FF"
-        title="Market" />
+        title="BBS" />
 
 </tabs>

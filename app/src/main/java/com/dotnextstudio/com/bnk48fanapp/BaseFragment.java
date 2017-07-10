@@ -51,6 +51,7 @@ import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.Nameable;
 import com.mikhaellopez.circularfillableloaders.CircularFillableLoaders;
+import com.yalantis.pulltomakesoup.PullToRefreshView;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -89,7 +90,7 @@ public class BaseFragment extends Fragment implements BaseSliderView.OnSliderCli
     public List<Data> mData;
 
     private LinearLayoutManager mManager;
-
+    public PullToRefreshView mPullToRefreshView;
     public static final String URL =
             "http://blog.teamtreehouse.com/api/get_recent_summary/";
  //   public CustomAdapter mAdapter;
@@ -122,7 +123,7 @@ public class BaseFragment extends Fragment implements BaseSliderView.OnSliderCli
 
 
         new DrawerBuilder().withActivity(getActivity()).build();
-
+        mPullToRefreshView  = (PullToRefreshView) view.findViewById(R.id.pull_to_refresh1);
 
         sliderLayout = (SliderLayout)view.findViewById(R.id.slider);
 
@@ -188,7 +189,7 @@ public class BaseFragment extends Fragment implements BaseSliderView.OnSliderCli
 
               //  Log.i("dev","getTitle==>"+ HashMapForURL.size());
 
-                for(String name : HashMapForURL.keySet()){
+              /*      for(String name : HashMapForURL.keySet()){
 
                     TextSliderView textSliderView = new TextSliderView(getActivity());
                   //  Log.i("dev","getTitle 1==>"+HashMapForURL.get(name));
@@ -233,7 +234,7 @@ public class BaseFragment extends Fragment implements BaseSliderView.OnSliderCli
                     public void onPageScrollStateChanged(int state) {
 
                     }
-                });
+                });*/
 
 
             }
@@ -251,7 +252,7 @@ public class BaseFragment extends Fragment implements BaseSliderView.OnSliderCli
         mAdapter = new FirebaseRecyclerAdapter<Data, NewsHolder>(Data.class, R.layout.item_news,
                 NewsHolder.class,query ) {
             @Override
-            protected void populateViewHolder(NewsHolder viewHolder, final Data model, int position) {
+            protected void populateViewHolder(NewsHolder viewHolder, final Data model, final int position) {
 
 
                 final DatabaseReference eventRef = getRef(position);
@@ -259,10 +260,19 @@ public class BaseFragment extends Fragment implements BaseSliderView.OnSliderCli
 
                 final String postKey = eventRef.getKey();
 
-               Ion.with(viewHolder.newsimage).load(model.getFull_picture());
+                Ion.with(viewHolder.newsimage).load(model.getFull_picture());
 
                 viewHolder.newstitle.setText(model.getMessage());
 
+                viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        
+                        Intent facebookIntent = new Intent(Intent.ACTION_VIEW);
+                        facebookIntent.setData(Uri.parse(model.getLink()));
+                        startActivity(facebookIntent);
+                    }
+                });
 
             }
 
@@ -311,7 +321,7 @@ public class BaseFragment extends Fragment implements BaseSliderView.OnSliderCli
         public void pushFragment(Fragment fragment);
     }
 
-    public static class NewsHolder extends RecyclerView.ViewHolder {
+    public static class NewsHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private final ImageView newsimage;
         private final TextView newstitle;
 
@@ -321,12 +331,18 @@ public class BaseFragment extends Fragment implements BaseSliderView.OnSliderCli
 
             newstitle = (TextView) itemView.findViewById(R.id.newstitle);
 
-
+            itemView.setOnClickListener(this);
             // fbimage.setImageResource(R.drawable.test1);
         }
 
         public void setImage(String url) {
 
+
+        }
+
+        @Override
+        public void onClick(View v) {
+            Log.d("dev","===>");
 
         }
     }

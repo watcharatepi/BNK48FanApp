@@ -1,5 +1,6 @@
 package com.dotnextstudio.com.bnk48fanapp;
 
+import android.graphics.Color;
 import android.support.annotation.IdRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -39,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Frag
     Fragment mFragment;
     Fragment tabFragment1 = NewsFragment.newInstance(0);
     Fragment tabFragment2 = CalFragment.newInstance(0);
-    Fragment tabFragment3 = SocialFragment.newInstance(0);
+    Fragment tabFragment3 = LiveFragment.newInstance(0);
     Fragment tabFragment4 = NewsFragment.newInstance(0);
     Fragment tabFragment5 = NewsFragment.newInstance(0);
 
@@ -52,7 +53,8 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Frag
         setTitle("Home");
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-
+        setSupportActionBar(toolbar);
+        toolbar.setTitleTextColor(Color.WHITE);
 
 //        setSupportActionBar(toolbar);
 
@@ -114,48 +116,37 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Frag
 
 
         mFragmentManager = getSupportFragmentManager();
-       /* mBottomBar.setOnTabSelectListener(new OnTabSelectListener() {
+        mBottomBar.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
             public void onTabSelected(@IdRes int tabId) {
                 switch (tabId) {
                     case R.id.tab_home:
+                        setTitle("Hot News");
                         Log.d("dev","home===>");
                         mNavController.switchTab(INDEX_HOME);
                         break;
                     case R.id.tab_cal:
+                        setTitle("Calendar");
                         Log.d("dev","cal===>");
                         mNavController.switchTab(INDEX_CAL);
                         break;
                     case R.id.tab_ds:
+                        setTitle("Live Studio");
+                        Log.d("dev","live===>");
                         mNavController.switchTab(INDEX_LIVE);
                         break;
                     case R.id.tab_sns:
+                        setTitle("Social");
                         mNavController.switchTab(INDEX_SNS);
                         break;
                     case R.id.tab_market:
+                        setTitle("BBS");
                         mNavController.switchTab(INDEX_MARKET);
                         break;
                 }
             }
-        });*/
-
-
-        mBottomBar.setOnTabSelectListener(new OnTabSelectListener() {
-            @Override
-            public void onTabSelected(@IdRes int tabId) {
-
-            }
         });
 
-
-
-
-        mBottomBar.setOnTabReselectListener(new OnTabReselectListener() {
-            @Override
-            public void onTabReSelected(@IdRes int tabId) {
-                mNavController.clearStack();
-            }
-        });
 
 
 
@@ -186,11 +177,11 @@ public class MainActivity extends AppCompatActivity implements BaseFragment.Frag
             case INDEX_CAL:
                 return CalFragment.newInstance(0);
             case INDEX_LIVE:
-                return SocialFragment.newInstance(0);
+                return LiveFragment.newInstance(0);
             case INDEX_SNS:
-                return NewsFragment.newInstance(0);
+                return SocialFragment.newInstance(0);
             case INDEX_MARKET:
-                return NewsFragment.newInstance(0);
+                return LiveFragment.newInstance(0);
         }
         throw new IllegalStateException("Need to send an index that we know");
 
